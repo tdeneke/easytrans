@@ -1,12 +1,16 @@
 from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
+db = SQLAlchemy(app)
+
+from models import *
 
 @app.route('/')
 def hello():
-    print os.environ['APP_SETTINGS']
+    #print os.environ['APP_SETTINGS']
     return "easytrans helloworld!"
 
 @app.route('/<name>')
