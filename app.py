@@ -11,6 +11,7 @@ from models import *
 @app.route('/')
 def hello():
     #print os.environ['APP_SETTINGS']
+    #print os.environ['DATABASE_URL']
     return "easytrans helloworld!"
 
 @app.route('/<name>')
