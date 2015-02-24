@@ -20,8 +20,8 @@ import json
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
-db = SQLAlchemy(app)
 
+db = SQLAlchemy(app)
 q = Queue(connection=conn)
 
 from models import Result
@@ -53,10 +53,12 @@ def count_and_save_words(url):
     nonPunct = re.compile('.*[A-Za-z].*')
     raw_words = [w for w in text if nonPunct.match(w)]
     raw_word_count = Counter(raw_words)
+    #print raw_word_count
 
     # stop words
     no_stop_words = [w for w in raw_words if w.lower() not in stops]
     no_stop_words_count = Counter(no_stop_words)
+    print no_stop_words_count
 
     # save the results
     try:
@@ -79,7 +81,7 @@ def count_and_save_words(url):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    return render_template('et.html')
 
 
 @app.route('/start', methods=['POST'])
@@ -87,6 +89,13 @@ def get_counts():
     # get url
     data = json.loads(request.data.decode())
     url = data["url"]
+    preset = data["preset"]
+    codec = data["codec"]
+    resolution = data["resolution"]
+    framerate = data["framerate"]
+    bitrate = data["bitrate"]
+
+    print data 
     # form URL, id necessary
     if 'http://' not in url[:7]:
         url = 'http://' + url

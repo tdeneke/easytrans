@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app="WordcountApp">
+  <head>
+    <title>easytrans</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      .container {
+        max-width: 1000px;
+      }
+    </style>
+  </head>
+  <body ng-controller="WordcountController">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-5 col-sm-offset-1">
+          <h1>easytrans request</h1>
+          <br>
+          <form role="form" ng-submit="getResults()">
+            <div class="form-group">
+              <input type="text" name="url" class="form-control" id="url-box" placeholder="Enter URL..." style="max-width: 300px;" ng-model="input_url" required>
+            </div>
+            <div class="form-group">
+            <select class="form-control" ng-model="input_preset">
+  		<option value="slow">slow</option>
+  		<option value="medium">medium</option>
+		<option value="fast">fast</option>
+		</select>
+            </div>
+            <div class="form-group">
+            <select class="form-control" ng-model="input_codec">
+                <option value="h264">h264</option>
+                <option value="h265">h265</option>
+                <option value="mpeg4">mpeg4</option>
+            </select>
+            </div>
+            <div class="form-group">
+            <select class="form-control" ng-model="input_resolution">
+                <option value="3840x2160">3840x2160</option>
+                <option value="1920x1080">1920x1080</option>
+                <option value="1280x720">1280x720</option>
+            </select>
+            </div>
+            <div class="form-group">   
+            <select class="form-control" ng-model=input_framerate>
+                <option value="15">15</option>
+		<option value="24">24</option>
+                <option value="30">30</option>
+                <option value="60">60</option>
+            </select>
+            </div> 
+            <div class="form-group">
+	    <select class="form-control" ng-model=input_bitrate>
+                <option value="5000k">5000kbs</option>
+                <option value="3000k">3000kbs</option>
+                <option value="820k">820kbs</option>
+            </select>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </div>
+        <div class="col-sm-5 col-sm-offset-1">
+          <h1>Predictions and Prices</h1>
+          <br>
+          {{ openTag }}
+          <div id="results">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Estimated</th>
+                  <th>Measured</th>
+                </tr>
+              </thead>
+              <tbody>
+              {{ openTag }}
+                <tr ng-repeat="(key, val) in wordcounts">
+                  {% raw %}
+                  <td>{{key}}</td>
+                  <td>{{val}}</td>
+                  {% endraw %}
+                </tr>
+              {{ openTag }}
+          </div>
+          <div id="price_results">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Prices</th>
+                </tr>
+              </thead>
+              <tbody>
+              {{ openTag }}
+                <tr ng-repeat="(key, val) in wordcounts">
+                  {% raw %}
+                  <td>{{key}}</td>
+                  <td>{{val}}</td>
+                  {% endraw %}
+                </tr>
+              {{ openTag }}
+          </div>
+          {{ openTag }}         
+        </div>
+      </div>
+    </div>
+    <br><br>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+  </body>
+</html>
