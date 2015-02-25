@@ -6,13 +6,15 @@ from bs4 import BeautifulSoup
 from rq import Queue
 from rq.job import Job
 from worker import conn
+#from transcode import transcode_and_save_mesurments 
 import operator
 import os
 import requests
 import re
-import nltk
 import json
-
+import time
+import nltk
+import subprocess 
 
 #################
 # configuration #
@@ -26,39 +28,46 @@ q = Queue(connection=conn)
 
 from models import Result
 
+#helper
 
-##########
-# helper #
-##########
-
-def count_and_save_words(url):
+def transcode_and_save_mesurments(cmd,url):
 
     errors = []
 
     try:
-        r = requests.get(url)
+      #r = requests.get(url)
+      print cmd
     except:
         errors.append(
-            "Unable to get URL. Please make sure it's valid and try again."
+            "Unable to get cmd. Please make sure it's valid and try again."
         )
         return {"error": errors}
 
+    #simulate transcoding 
+    #time.sleep(5)
+    start = os.times()
+    ls_output = subprocess.check_output(cmd, shell=True)
+    end = os.times()
+    print start[4] - end[4]
+    
+    #print ls_output
+
     # text processing
-    raw = BeautifulSoup(r.text).get_text()
-    nltk.data.path.append('./nltk_data/')  # set the path
-    tokens = nltk.word_tokenize(raw)
-    text = nltk.Text(tokens)
+    #raw = BeautifulSoup(r.text).get_text()
+    #nltk.data.path.append('./nltk_data/')  # set the path
+    #tokens = nltk.word_tokenize(raw)
+    #text = nltk.Text(tokens)
 
     # remove punctuation, count raw words
-    nonPunct = re.compile('.*[A-Za-z].*')
-    raw_words = [w for w in text if nonPunct.match(w)]
-    raw_word_count = Counter(raw_words)
-    #print raw_word_count
+    #nonPunct = re.compile('.*[A-Za-z].*')
+    #raw_words = [w for w in text if nonPunct.match(w)]
+    raw_word_count = Counter({'Estimated': 0, 'Real': end[4] - start[4]})    #Counter(raw_words) 
 
     # stop words
-    no_stop_words = [w for w in raw_words if w.lower() not in stops]
-    no_stop_words_count = Counter(no_stop_words)
+    #no_stop_words = [w for w in raw_words if w.lower() not in stops]
+    no_stop_words_count = Counter({'Estimated': 0, 'Real': end[4] - start[4]})  #Counter(no_stop_words)
     print no_stop_words_count
+    print cmd
 
     # save the results
     try:
@@ -74,8 +83,8 @@ def count_and_save_words(url):
         errors.append("Unable to add item to database.")
         return {"error": errors}
 
-
-##########
+   
+#########r
 # routes #
 ##########
 
@@ -89,19 +98,14 @@ def get_counts():
     # get url
     data = json.loads(request.data.decode())
     url = data["url"]
-    preset = data["preset"]
-    codec = data["codec"]
-    resolution = data["resolution"]
-    framerate = data["framerate"]
-    bitrate = data["bitrate"]
-
-    print data 
+    cmd = "ffmpeg  -i " + "/home/tdeneke/easytrans/easytrans/videos/elephants_dream_1080p.h264" + " -c:v " + data["codec"] + " -preset " + data["preset"] + " -s " + data["resolution"] + " -r " + data["framerate"] + " -b:v " + data["bitrate"] + " -y " + "/home/tdeneke/easytrans/easytrans/videos/output.mp4"  
+ 
     # form URL, id necessary
     if 'http://' not in url[:7]:
         url = 'http://' + url
     # start job
     job = q.enqueue_call(
-        func=count_and_save_words, args=(url,), result_ttl=5000
+        func=transcode_and_save_mesurments, args=(cmd,url,), result_ttl=5000
     )
     # return created job id
     return job.get_id()
