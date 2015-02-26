@@ -1,12 +1,11 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 from stop_words import stops
 from collections import Counter
 from bs4 import BeautifulSoup
 from rq import Queue
 from rq.job import Job
-from worker import conn
-#from transcode import transcode_and_save_mesurments 
+from worker import conn 
 import operator
 import os
 import requests
@@ -14,7 +13,9 @@ import re
 import json
 import time
 import nltk
-import subprocess 
+import subprocess
+import random
+import string
 
 #################
 # configuration #
@@ -30,10 +31,18 @@ from models import Result
 
 #helper
 
-def transcode_and_save_mesurments(cmd,url):
+def transcode_and_save_mesurments(data):
 
     errors = []
+    
+    input_url = "/home/tdeneke/easytrans/easytrans/videos/"+ data["url"]
+    vid = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(11)])
+    output_url = "/home/tdeneke/easytrans/easytrans/videos/" + vid
+    container = "mp4" 
 
+    cmd = "ffmpeg  -i " + input_url  + " -c:v " + data["codec"] + " -preset " + data["preset"] + " -s " + data["resolution"] + " -r " + data["framerate"] + " -b:v " + data["bitrate"] + " -y -f " + container +" "+ output_url
+
+   
     try:
       #r = requests.get(url)
       print cmd
@@ -43,38 +52,34 @@ def transcode_and_save_mesurments(cmd,url):
         )
         return {"error": errors}
 
-    #simulate transcoding 
-    #time.sleep(5)
+    #transcode and mesure
     start = os.times()
     ls_output = subprocess.check_output(cmd, shell=True)
     end = os.times()
-    print start[4] - end[4]
-    
-    #print ls_output
+    #print end[4] - start[4]
 
-    # text processing
-    #raw = BeautifulSoup(r.text).get_text()
-    #nltk.data.path.append('./nltk_data/')  # set the path
-    #tokens = nltk.word_tokenize(raw)
-    #text = nltk.Text(tokens)
+    #lets get data from the output video
+    cmd = "ffprobe -show_format " + output_url
+    ls_output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
 
-    # remove punctuation, count raw words
-    #nonPunct = re.compile('.*[A-Za-z].*')
-    #raw_words = [w for w in text if nonPunct.match(w)]
-    raw_word_count = Counter({'Estimated': 0, 'Real': end[4] - start[4]})    #Counter(raw_words) 
+    #file size in MB
+    file_size = (int(re.search('size=(\d*)', ls_output).group(1))) / (1024*1024)
+    duration = float(re.search('duration=([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)', ls_output).group(1))
+    #print file_size
 
-    # stop words
-    #no_stop_words = [w for w in raw_words if w.lower() not in stops]
-    no_stop_words_count = Counter({'Estimated': 0, 'Real': end[4] - start[4]})  #Counter(no_stop_words)
-    print no_stop_words_count
-    print cmd
+    #update the data with additional/modified info 
+    data["url"] = input_url
+    data.update({'container':container})
+    data.update({'ourl':output_url})
+    data.update({'real_size':file_size})
+    data.update({'real_time':end[4]-start[4]})
+    data.update({'duration':duration})
+    job_data = Counter(data)  
 
     # save the results
     try:
         result = Result(
-            url=url,
-            result_all=raw_word_count,
-            result_no_stop_words=no_stop_words_count
+            result_all=job_data
         )
         db.session.add(result)
         db.session.commit()
@@ -98,14 +103,14 @@ def get_counts():
     # get url
     data = json.loads(request.data.decode())
     url = data["url"]
-    cmd = "ffmpeg  -i " + "/home/tdeneke/easytrans/easytrans/videos/elephants_dream_1080p.h264" + " -c:v " + data["codec"] + " -preset " + data["preset"] + " -s " + data["resolution"] + " -r " + data["framerate"] + " -b:v " + data["bitrate"] + " -y " + "/home/tdeneke/easytrans/easytrans/videos/output.mp4"  
- 
+    data.update({'estimated_time':0}) 
+    data.update({'estimated_size':0})
     # form URL, id necessary
     if 'http://' not in url[:7]:
         url = 'http://' + url
     # start job
     job = q.enqueue_call(
-        func=transcode_and_save_mesurments, args=(cmd,url,), result_ttl=5000
+        func=transcode_and_save_mesurments, args=(data,), result_ttl=5000
     )
     # return created job id
     return job.get_id()
@@ -119,10 +124,10 @@ def get_results(job_key):
     if job.is_finished:
         result = Result.query.filter_by(id=job.result).first()
         results = sorted(
-            result.result_no_stop_words.items(),
+            result.result_all.items(),
             key=operator.itemgetter(1),
             reverse=True
-        )[:10]
+        )
         return jsonify(results)
     else:
         return "Nay!", 202
