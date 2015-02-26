@@ -34,8 +34,7 @@
 
      var timeout = "";
      var prices = [{"Company":"Amazon", "Calculated":"2.80", "Real":"2.60"}, {"Company":"Zencoder", "Calculated":"5.80", "Real":"5.60"},{"Company":"Encoding", "Calculated":"4.80", "Real":"4.60"},{"Company":"Uencode", "Calculated":"2.80", "Real":"2.75"}];   
-     var mesurments = [{"Type":"time", "Estimate":"2.80", "Real":"2.60"}, {"Type":"price", "Estimate":"5.80", "Real":"5.60"},{"Type":"size", "Estimate":"50MB", "Real":"40MB"},{"Type":"quality", "Estimate":"0", "Real":"0.85"}];   
-
+     var mesurments = [{"Type":"time", "Estimate":"2.80", "Real":"2.60"}, {"Type":"price", "Estimate":"5.80", "Real":"5.60"},{"Type":"size", "Estimate":"50MB", "Real":"40MB"},{"Type":"quality", "Estimate":"0", "Real":"0.85"}];
      var poller = function() {
        // fire another request
        $http.get('/results/'+jobID).
