@@ -35,13 +35,18 @@ def transcode_and_save_mesurments(data):
 
     errors = []
     
-    input_url = "/home/tdeneke/easytrans/easytrans/videos/"+ data["url"]
+    input_url = "/home/ubuntu/easytrans/videos/"+ data["url"]
     vid = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(11)])
-    output_url = "/home/tdeneke/easytrans/easytrans/videos/" + vid
+    output_url = "/home/ubuntu/easytrans/videos/" + vid
     container = "mp4" 
 
     cmd = "ffmpeg  -i " + input_url  + " -c:v " + data["codec"] + " -preset " + data["preset"] + " -s " + data["resolution"] + " -r " + data["framerate"] + " -b:v " + data["bitrate"] + " -y -f " + container +" "+ output_url
 
+    if data["codec"] == "vp8":
+    	cmd = "ffmpeg  -i " + input_url  + " -c:v " + data["codec"] + " -preset " + data["preset"] + " -s " + data["resolution"] + " -r " + data["framerate"] + " -b:v " + data["bitrate"] + " -y " + output_url +".mkv"
+
+    if data["codec"] == "flv":	     
+ 	cmd = "ffmpeg  -i " + input_url  + " -c:v " + data["codec"] + " -preset " + data["preset"] + " -s " + data["resolution"] + " -r " + data["framerate"] + " -b:v " + data["bitrate"] + " -y -f flv " + output_url
    
     try:
       #r = requests.get(url)
@@ -60,10 +65,14 @@ def transcode_and_save_mesurments(data):
 
     #lets get data from the output video
     cmd = "ffprobe -show_format " + output_url
+    if data["codec"] == "vp8":
+	cmd = "ffprobe -show_format " + output_url + ".mkv"
+
+    
     ls_output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
 
     #file size in MB
-    file_size = (int(re.search('size=(\d*)', ls_output).group(1))) / (1024*1024)
+    file_size = int(re.search('size=(\d*)', ls_output).group(1))
     duration = float(re.search('duration=([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)', ls_output).group(1))
     #print file_size
 
