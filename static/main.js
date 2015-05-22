@@ -49,8 +49,8 @@
 	     mesurments[0].Real = Math.round(data.real_time * 1000000) / 1000000;
 	     //price (m3.xlarge	 4vCPU	13ECU	15GiB	2 x 40 SSD GB	$0.280 per Hour)
 	     //price (t2.micro	1	Variable	1	EBS Only	$0.013 per Hour)
-             mesurments[1].Estimate = Math.round(data.estimated_size * (0.280/3600) * 1000000) / 1000000;
-	     mesurments[1].Real = Math.round(data.real_size * (0.280 / 3600) * 1000000) / 1000000;
+             mesurments[1].Estimate = Math.round(data.estimated_time  * (0.280/3600) * 1000000) / 1000000;
+	     mesurments[1].Real = Math.round(data.real_time * (0.280 / 3600) * 1000000) / 1000000;
              //size
 	     mesurments[2].Estimate = data.estimated_size;
 	     mesurments[2].Real = data.real_size;
