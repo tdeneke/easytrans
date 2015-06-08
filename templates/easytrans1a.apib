@@ -5,10 +5,10 @@ HOST: https://api.notes.com
 Easytrans API is an *easy video transcoding* service.
 
 # Group Users
-Notes related resources of the **Easytrans API**
+Users related resources of the **Easytrans API**
 
-## Notes Collection [/users]
-### List all Notes [GET]
+## Users Collection [/users]
+### List all Users [GET]
 + Response 200 (application/json)
 
         [{
@@ -17,7 +17,7 @@ Notes related resources of the **Easytrans API**
           "id": 2, "name": "tlemma"
         }]
 
-### Create a Note [POST]
+### Create a User [POST]
 + Request (application/json)
 
         { "name": "uname" }
@@ -26,13 +26,13 @@ Notes related resources of the **Easytrans API**
 
         { "id": 3, "name": "uname" }
 
-## Note [/users/{id}]
-A single Note object with all its details
+## User [/users/{id}]
+A single user object with all its details
 
 + Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Note to perform action with. Has example value.
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action with. Has example value.
 
-### Retrieve a Note [GET]
+### Retrieve a User [GET]
 + Response 200 (application/json)
 
     + Header
@@ -43,5 +43,5 @@ A single Note object with all its details
 
             { "id": 2, "name": "tlemma" }
 
-### Remove a Note [DELETE]
+### Remove a User [DELETE]
 + Response 204
