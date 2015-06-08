@@ -12,19 +12,19 @@ Notes related resources of the **Easytrans API**
 + Response 200 (application/json)
 
         [{
-          "id": 1, "title": "Jogging in park"
+          "id": 1, "name": "tdeneke"
         }, {
-          "id": 2, "title": "Pick-up posters from post-office"
+          "id": 2, "name": "tlemma"
         }]
 
 ### Create a Note [POST]
 + Request (application/json)
 
-        { "title": "Buy cheese and bread for breakfast." }
+        { "name": "uname" }
 
 + Response 201 (application/json)
 
-        { "id": 3, "title": "Buy cheese and bread for breakfast." }
+        { "id": 3, "name": "uname" }
 
 ## Note [/users/{id}]
 A single Note object with all its details
@@ -41,7 +41,7 @@ A single Note object with all its details
 
     + Body
 
-            { "id": 2, "title": "Pick-up posters from post-office" }
+            { "id": 2, "name": "tlemma" }
 
 ### Remove a Note [DELETE]
 + Response 204
