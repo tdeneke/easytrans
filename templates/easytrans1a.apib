@@ -2,21 +2,12 @@ FORMAT: 1A
 HOST: https://api.notes.com
 
 # Easytrans API
-Easytrans API is an *easy video transcoding* service.
+API for an *easy video transcoding* service.
 
 # Group Users
 Users related resources of the **Easytrans API**
 
 ## Users Collection [/users]
-### List all Users [GET]
-+ Response 200 (application/json)
-
-        [{
-          "id": 1, "name": "tdeneke"
-        }, {
-          "id": 2, "name": "tlemma"
-        }]
-
 ### Create a User [POST]
 + Request (application/json)
 
@@ -24,7 +15,9 @@ Users related resources of the **Easytrans API**
 
 + Response 201 (application/json)
 
-        { "id": 3, "name": "uname" }
+        { "id": 3, 
+	  "name": "uname" 
+	}
 
 ## User [/users/{id}]
 A single user object with all its details
@@ -45,3 +38,189 @@ A single user object with all its details
 
 ### Remove a User [DELETE]
 + Response 204
+
+
+# Group Videos
+Videos related resources of the **Easytrans API**
+
+## Videos Collection [/videos]
+### Create a Video [POST]
++ Request (application/json)
+
+        { "title": "vtitle",
+	  "url": "vurl" }
+
++ Response 201 (application/json)
+
+        { "id": 3, 
+	  "title": "vtitle" 
+	  "url": "url"
+	}
+
+## Video [/Videos/{id}]
+A single video object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action with. Has example value.
+
+### Retrieve a User [GET]
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            { "id": 2, 
+	      "title": "vtitle",
+	      "url", "url" }
+
+### Remove a Video [DELETE]
++ Response 204
+
+
+# Group Presets
+Video transcoding presets for the **Easytrans API**
+
+## Preset Collection [/presets]
+### Create a Preset [POST]
++ Request (application/json)
+
+        { "preset": "pname" }
+
++ Response 201 (application/json)
+
+        { "id": 3, 
+	  "name": "pname" 
+	}
+
+## User [/presets/{id}]
+A single preset object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action with. Has example value.
+
+### Retrieve a Preset [GET]
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            { "id": 2, "name": "pname" }
+
+### Remove a Preset [DELETE]
++ Response 204
+
+
+# Group Recommendations
+Preset recommendation related resources of the **Easytrans API**
+
+## Recommendation Collection [/recommendations]
+### Create a Recommendation [POST]
++ Request (application/json)
+
+        { "name": "uname" }
+
++ Response 201 (application/json)
+
+        { "id": 3, 
+	  "name": "rname" 
+	}
+
+## Recommendation [/recommendations/{id}]
+A single recommendation object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action with. Has example value.
+
+### Retrieve a Recommendation [GET]
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            { "id": 2, "name": "rname" }
+
+### Remove a Recommendation [DELETE]
++ Response 204
+
+
+# Group Estimates
+Estimates related resources of the **Easytrans API**
+
+## Estimates Collection [/estimates]
+### Create an estimate[POST]
++ Request (application/json)
+
+        { "name": "ename" }
+
++ Response 201 (application/json)
+
+        { "id": 3, 
+	  "name": "ename" 
+	}
+
+## Estimates [/estimates/{id}]
+A single estimate object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action with. Has example value.
+
+### Retrieve an estimate [GET]
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            { "id": 2, "name": "ename" }
+
+### Remove an estimate [DELETE]
++ Response 204
+
+
+# Group Jobs
+Jobs related resources of the **Easytrans API**
+
+## Jobs Collection [/jobs]
+### Create a Job [POST]
++ Request (application/json)
+
+        { "name": "jname" }
+
++ Response 201 (application/json)
+
+        { "id": 3, 
+	  "name": "jname" 
+	}
+
+## Job [/jobs/{id}]
+A single job object with all its details
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action with. Has example value.
+
+### Retrieve a Job [GET]
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            { "id": 2, "name": "jname" }
+
+### Remove a Job [DELETE]
++ Response 204
+
+
